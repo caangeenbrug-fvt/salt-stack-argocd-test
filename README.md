@@ -20,6 +20,8 @@ worker/                    # Worker minion
 git-server/                # Bare git repo seed + daemon entrypoint
 salt-states-repo/          # Salt states, pillars, and Kubernetes manifests (seeded into git-server image)
   └── k8s/                 # Kustomize base reconciled by Argo CD
+k3d/                       # Declarative k3d cluster configuration
+scripts/                   # Helper scripts (cluster lifecycle, etc.)
 docker-compose.yml         # Convenience for building images locally
 ```
 
@@ -40,10 +42,11 @@ This produces the tagged images used inside the cluster:
 
 ## 2. Create a k3d Cluster and Load Images
 ```sh
-k3d cluster create salt-demo --agents 1 --servers 1
-k3d image import git-server:latest cloud-master:latest panelpc:latest worker:latest -c salt-demo
+./scripts/create-cluster.sh
 ```
-> If you rerun the build, re-import the images so Kubernetes can pull the latest layers.
+The script uses `k3d/cluster.yaml` (defaults to the `salt-demo` cluster) and imports any locally available images that match the ones you built in step 1. Update the config file if you want a different cluster name or topology.
+
+> Prefer the manual workflow? Run `k3d cluster create --config k3d/cluster.yaml` and then `k3d image import … -c <cluster-name>` yourself.
 
 ## 3. Install Argo CD
 ```sh
@@ -98,9 +101,11 @@ When the Application syncs you should see pods for `git-server`, `cloud-master`,
 
 ## Cleanup
 ```sh
-k3d cluster delete salt-demo
+./scripts/delete-cluster.sh
 ```
-This tears down the cluster and frees resources. Optionally remove the locally built images with `docker image rm` if you no longer need them.
+The script reads the cluster name from `k3d/cluster.yaml` and quietly returns if the cluster is already gone.
+
+Optionally remove the locally built images with `docker image rm` if you no longer need them.
 
 ## Optional: Local Docker Compose Run
 `docker-compose.yml` still defines the same containers for ad-hoc local execution. Set `GITOPS_COMMIT` (and optionally expose ports) if you want to run without Kubernetes.
