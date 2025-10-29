@@ -1,4 +1,4 @@
-FROM saltstack/salt:3006
+FROM saltstack/salt:3004-alpine3.14
 USER root
 RUN if command -v apt-get >/dev/null 2>&1; then \
       apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*; \
