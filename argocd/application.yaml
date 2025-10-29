@@ -3,13 +3,14 @@ kind: Application
 metadata:
   name: salt-stack-demo
 spec:
+  project: default
   destination:
     namespace: salt-demo
     server: https://kubernetes.default.svc
   source:
     repoURL: https://github.com/caangeenbrug-fvt/salt-stack-argocd-test.git
     targetRevision: main
-    path: k8s/base
+    path: salt-states-repo/k8s/base
   syncPolicy:
     automated:
       prune: true

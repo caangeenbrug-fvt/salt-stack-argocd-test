@@ -67,11 +67,15 @@ Apply the Application manifest and let Argo sync:
 ```sh
 kubectl apply -f argocd/application.yaml -n argocd
 ```
-(Optional) Port-forward the Argo API/server if you want to watch the UI:
+(Optional) Port-forward the Argo API/server for CLI/UI access. Leave the port-forward running in one terminal, then log in from another:
 ```sh
+# Terminal 1
 kubectl port-forward svc/argocd-server -n argocd 8080:443
-argocd login https://localhost:8080 --username admin --password <initial-password>
+
+# Terminal 2
+argocd login --insecure --grpc-web localhost:8080 --username admin --password <initial-password>
 ```
+Replace `<initial-password>` with the admin secret (`kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d`).
 When the Application syncs you should see pods for `git-server`, `cloud-master`, `panelpc`, and `worker` in the `salt-demo` namespace.
 
 ## 6. Verify the Salt Chain
