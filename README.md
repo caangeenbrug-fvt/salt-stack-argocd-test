@@ -39,6 +39,7 @@ docker compose build
 ```
 This produces the tagged images used inside the cluster:
 `git-server:latest`, `cloud-master:latest`, `panelpc:latest`, and `worker:latest`.
+You can skip this step if you rely on `./scripts/create-cluster.sh`, which will run the same build command unless you set `SKIP_BUILD=1`.
 
 ## 2. Create a k3d Cluster and Load Images
 ```sh

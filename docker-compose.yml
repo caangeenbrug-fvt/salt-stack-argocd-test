@@ -6,11 +6,13 @@ services:
     build:
       context: .
       dockerfile: git-server/Dockerfile
+    image: git-server:latest
 
   cloud-master:
     build:
       context: .
       dockerfile: cloud-master/Dockerfile
+    image: cloud-master:latest
     volumes:
       - gitops-data:/gitops
     environment:
@@ -25,6 +27,7 @@ services:
     build:
       context: .
       dockerfile: panelpc/Dockerfile
+    image: panelpc:latest
     hostname: panelpc
     volumes:
       - gitops-data:/gitops
@@ -41,6 +44,7 @@ services:
     build:
       context: .
       dockerfile: worker/Dockerfile
+    image: worker:latest
     hostname: worker
     volumes:
       - gitops-data:/gitops

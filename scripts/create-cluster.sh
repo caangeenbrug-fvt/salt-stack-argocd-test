@@ -19,7 +19,26 @@ if ! command -v k3d >/dev/null 2>&1; then
   exit 1
 fi
 
-existing_clusters=$(sudo k3d cluster list 2>/dev/null | awk 'NR>1 {print $1}')
+if [ "${SKIP_BUILD:-0}" -ne 1 ]; then
+  COMPOSE_FILE="${REPO_ROOT}/docker-compose.yml"
+  if [ -f "${COMPOSE_FILE}" ]; then
+    if command -v docker >/dev/null 2>&1; then
+      if docker compose version >/dev/null 2>&1; then
+        echo "[k3d] Building images with docker compose" >&2
+        sudo docker compose -f "${COMPOSE_FILE}" build
+      elif command -v docker-compose >/dev/null 2>&1; then
+        echo "[k3d] Building images with docker-compose" >&2
+        sudo docker-compose -f "${COMPOSE_FILE}" build
+      else
+        echo "[k3d] Docker Compose not found; skipping image build" >&2
+      fi
+    else
+      echo "[k3d] Docker CLI not found; skipping image build" >&2
+    fi
+  fi
+fi
+
+existing_clusters=$(k3d cluster list 2>/dev/null | awk 'NR>1 {print $1}')
 if printf '%s\n' "${existing_clusters}" | grep -qx "${CLUSTER_NAME}"; then
   echo "[k3d] Cluster ${CLUSTER_NAME} already exists. Skipping creation." >&2
 else

@@ -20,7 +20,7 @@ fi
 clusters=$(sudo k3d cluster list 2>/dev/null | awk 'NR>1 {print $1}')
 if printf '%s\n' "${clusters}" | grep -qx "${CLUSTER_NAME}"; then
   echo "[k3d] Deleting cluster ${CLUSTER_NAME}" >&2
-  sudo k3d cluster delete "${CLUSTER_NAME}" >/dev/null
+  sudo sudo k3d cluster delete "${CLUSTER_NAME}" >/dev/null
   echo "[k3d] Cluster ${CLUSTER_NAME} removed." >&2
 else
   echo "[k3d] Cluster ${CLUSTER_NAME} not found." >&2
