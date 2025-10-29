@@ -53,7 +53,7 @@ def ensure_clone(repo_url: str):
 
 def checkout_revision(target_rev: str) -> str:
     run_git(["-C", str(WORK_DIR), "fetch", "origin"])
-    rev = run_git(["-C", str(WORK_DIR), "rev-parse", target_rev]).stdout.strip()
+    rev = run_git(["-C", str(WORK_DIR), "rev-parse", f"origin/{target_rev}"]).stdout.strip()
     run_git(["-C", str(WORK_DIR), "checkout", rev])
     return rev
 

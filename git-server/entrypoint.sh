@@ -20,6 +20,7 @@ if [ ! -d "$REPO_PATH" ]; then
     git commit -m "Initial salt state commit" && \
     git branch -M main && \
     git push origin main)
+  git --git-dir="$REPO_PATH" symbolic-ref HEAD refs/heads/main
   rm -rf "$tmpdir"
 fi
 
