@@ -7,7 +7,7 @@ spec:
     namespace: salt-demo
     server: https://kubernetes.default.svc
   source:
-    repoURL: https://github.com/your-user/salt-stack-demo.git
+    repoURL: https://github.com/caangeenbrug-fvt/salt-stack-argocd-test.git
     targetRevision: main
     path: k8s/base
   syncPolicy:
