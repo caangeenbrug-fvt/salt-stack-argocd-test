@@ -17,7 +17,7 @@ services:
       - gitops-data:/gitops
     environment:
       - GIT_REMOTE=git://git-server/salt-states.git
-      - GITOPS_COMMIT=CHANGE_ME
+      - GITOPS_COMMIT=main
     depends_on:
       - git-server
     networks:
@@ -34,7 +34,7 @@ services:
     environment:
       - GIT_REMOTE=git://git-server/salt-states.git
       - CLOUD_MASTER=cloud-master
-      - GITOPS_COMMIT=CHANGE_ME
+      - GITOPS_COMMIT=main
     depends_on:
       - cloud-master
     networks:
@@ -50,7 +50,7 @@ services:
       - gitops-data:/gitops
     environment:
       - PANEL_MASTER=panelpc
-      - GITOPS_COMMIT=CHANGE_ME
+      - GITOPS_COMMIT=main
     depends_on:
       - panelpc
     networks:
