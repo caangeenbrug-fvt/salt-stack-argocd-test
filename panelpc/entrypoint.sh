@@ -1,6 +1,7 @@
 #!/bin/sh
 set -eu
 COMMIT_FILE=${COMMIT_FILE:-/gitops/state/commit.sha}
+GITOPS_COMMIT=${GITOPS_COMMIT:-}
 GIT_REMOTE=${GIT_REMOTE:-git://git-server/salt-states.git}
 REPO_DIR=${REPO_DIR:-/srv/gitops}
 SALT_STATE_DIR="$REPO_DIR/salt"
@@ -66,8 +67,12 @@ syndic_master: $CLOUD_MASTER
 CONF
 }
 
-wait_for_file "$COMMIT_FILE"
-COMMIT=$(cat "$COMMIT_FILE")
+if [ -n "$GITOPS_COMMIT" ]; then
+  COMMIT="$GITOPS_COMMIT"
+else
+  wait_for_file "$COMMIT_FILE"
+  COMMIT=$(cat "$COMMIT_FILE")
+fi
 
 sync_repo "$COMMIT"
 update_pillar_commit "$COMMIT"

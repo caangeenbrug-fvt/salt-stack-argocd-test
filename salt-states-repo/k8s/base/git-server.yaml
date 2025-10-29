@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: git-server
+  namespace: salt-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: git-server
+  template:
+    metadata:
+      labels:
+        app: git-server
+    spec:
+      containers:
+        - name: git-server
+          image: git-server:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9418
+              name: git
+          volumeMounts:
+            - name: repo-data
+              mountPath: /srv/git
+      volumes:
+        - name: repo-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: git-server
+  namespace: salt-demo
+spec:
+  selector:
+    app: git-server
+  ports:
+    - port: 9418
+      targetPort: git
+      name: git

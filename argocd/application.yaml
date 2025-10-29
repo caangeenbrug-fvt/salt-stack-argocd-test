@@ -4,13 +4,15 @@ metadata:
   name: salt-stack-demo
 spec:
   destination:
-    server: https://kubernetes.default.svc
     namespace: salt-demo
+    server: https://kubernetes.default.svc
   source:
-    repoURL: git://git-server/salt-states.git
+    repoURL: https://github.com/your-user/salt-stack-demo.git
     targetRevision: main
-    path: .
+    path: k8s/base
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,6 +1,7 @@
 #!/bin/sh
 set -eu
 COMMIT_FILE=${COMMIT_FILE:-/gitops/state/commit.sha}
+GITOPS_COMMIT=${GITOPS_COMMIT:-}
 PANEL_MASTER=${PANEL_MASTER:-panelpc}
 WORKER_ID=${WORKER_ID:-worker}
 
@@ -28,8 +29,12 @@ gitops_commit: $commit
 CONF
 }
 
-wait_for_file "$COMMIT_FILE"
-COMMIT=$(cat "$COMMIT_FILE")
+if [ -n "$GITOPS_COMMIT" ]; then
+  COMMIT="$GITOPS_COMMIT"
+else
+  wait_for_file "$COMMIT_FILE"
+  COMMIT=$(cat "$COMMIT_FILE")
+fi
 configure_minion "$COMMIT"
 
 echo "[worker] Starting salt-minion for commit $COMMIT"

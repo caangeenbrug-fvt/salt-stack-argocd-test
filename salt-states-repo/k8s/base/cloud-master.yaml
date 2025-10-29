@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-master
+  namespace: salt-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloud-master
+  template:
+    metadata:
+      labels:
+        app: cloud-master
+    spec:
+      containers:
+        - name: cloud-master
+          image: cloud-master:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: GIT_REMOTE
+              value: git://git-server.salt-demo.svc.cluster.local/salt-states.git
+            - name: GITOPS_COMMIT
+              valueFrom:
+                configMapKeyRef:
+                  name: salt-gitops
+                  key: commit
+          volumeMounts:
+            - name: gitops-state
+              mountPath: /gitops
+          ports:
+            - containerPort: 4505
+              name: publisher
+            - containerPort: 4506
+              name: request
+      volumes:
+        - name: gitops-state
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-master
+  namespace: salt-demo
+spec:
+  selector:
+    app: cloud-master
+  ports:
+    - name: publisher
+      port: 4505
+      targetPort: publisher
+    - name: request
+      port: 4506
+      targetPort: request

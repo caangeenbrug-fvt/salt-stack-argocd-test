@@ -6,22 +6,6 @@ services:
     build:
       context: .
       dockerfile: git-server/Dockerfile
-    ports:
-      - "9418:9418"
-    networks:
-      - salt-net
-
-  argocd:
-    build:
-      context: .
-      dockerfile: argocd/Dockerfile
-    volumes:
-      - gitops-data:/gitops
-      - ./argocd/application.yaml:/config/application.yaml:ro
-    depends_on:
-      - git-server
-    networks:
-      - salt-net
 
   cloud-master:
     build:
@@ -31,9 +15,9 @@ services:
       - gitops-data:/gitops
     environment:
       - GIT_REMOTE=git://git-server/salt-states.git
+      - GITOPS_COMMIT=CHANGE_ME
     depends_on:
       - git-server
-      - argocd
     networks:
       - salt-net
 
@@ -47,6 +31,7 @@ services:
     environment:
       - GIT_REMOTE=git://git-server/salt-states.git
       - CLOUD_MASTER=cloud-master
+      - GITOPS_COMMIT=CHANGE_ME
     depends_on:
       - cloud-master
     networks:
@@ -61,6 +46,7 @@ services:
       - gitops-data:/gitops
     environment:
       - PANEL_MASTER=panelpc
+      - GITOPS_COMMIT=CHANGE_ME
     depends_on:
       - panelpc
     networks:

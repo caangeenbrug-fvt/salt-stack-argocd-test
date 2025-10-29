@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: panelpc
+  namespace: salt-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: panelpc
+  template:
+    metadata:
+      labels:
+        app: panelpc
+    spec:
+      containers:
+        - name: panelpc
+          image: panelpc:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: GIT_REMOTE
+              value: git://git-server.salt-demo.svc.cluster.local/salt-states.git
+            - name: CLOUD_MASTER
+              value: cloud-master.salt-demo.svc.cluster.local
+            - name: GITOPS_COMMIT
+              valueFrom:
+                configMapKeyRef:
+                  name: salt-gitops
+                  key: commit
+          ports:
+            - containerPort: 4505
+              name: publisher
+            - containerPort: 4506
+              name: request
+          volumeMounts:
+            - name: gitops-state
+              mountPath: /gitops
+      volumes:
+        - name: gitops-state
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: panelpc
+  namespace: salt-demo
+spec:
+  selector:
+    app: panelpc
+  ports:
+    - name: publisher
+      port: 4505
+      targetPort: publisher
+    - name: request
+      port: 4506
+      targetPort: request
