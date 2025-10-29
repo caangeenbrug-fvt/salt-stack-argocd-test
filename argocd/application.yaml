@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: salt-stack-demo
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: salt-demo
+  source:
+    repoURL: git://git-server/salt-states.git
+    targetRevision: main
+    path: .
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
